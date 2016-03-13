@@ -98,44 +98,73 @@
         </div>
 
         <hr/>
-        <div class="container col-lg-12">
-          <div class="pre-scrollable">
-            <div class="row" style="height:50%">
-              <div class="col-lg-12">
-                <div class="panel panel-default my-panel" >
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Event1</h3>
-                  </div>
-                  <div class="panel-body my-panel">
-                    Panel content
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row" style="height:50%">
-              <div class="col-lg-12">
-                <div class="panel panel-default my-panel" >
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Event2</h3>
-                  </div>
+        <div class="col-lg-12">
+          <div id="myCarousel" class="carousel slide vertical" data-ride="carousel" style="height:100%;">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+              <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+              <li data-target="#myCarousel" data-slide-to="1"></li>
+              <li data-target="#myCarousel" data-slide-to="2"></li>
+              <li data-target="#myCarousel" data-slide-to="3"></li>
+            </ol>
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+              <div class="item active">
+                <div class="panel panel-default my-panel">
+                  <div class="panel-heading">Panel Heading</div>
                   <div class="panel-body">
-                    Panel content
+                    <p>Description bla</p>
+                    <p>Time bla</p>
+                    <p>Host bla</p>
                   </div>
                 </div>
+
               </div>
-            </div>
-            <div class="row" style="height:50%">
-              <div class="col-lg-12">
-                <div class="panel panel-default my-panel" >
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Event3</h3>
-                  </div>
+
+              <div class="item">
+                <div class="panel panel-default my-panel">
+                  <div class="panel-heading">Panel Heading</div>
                   <div class="panel-body">
-                    Panel content
+                    <p>Description bla</p>
+                    <p>Time bla</p>
+                    <p>Host bla</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="item">
+                <div class="panel panel-default my-panel">
+                  <div class="panel-heading">Panel Heading</div>
+                  <div class="panel-body">
+                    <p>Description bla</p>
+                    <p>Time bla</p>
+                    <p>Host bla</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="item">
+                <div class="panel panel-default my-panel">
+                  <div class="panel-heading">Panel Heading</div>
+                  <div class="panel-body">
+                    <p>Description bla</p>
+                    <p>Time bla</p>
+                    <p>Host bla</p>
                   </div>
                 </div>
               </div>
             </div>
+
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+              <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+              <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
           </div>
         </div>
 
