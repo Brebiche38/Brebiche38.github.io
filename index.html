@@ -548,17 +548,17 @@
                 $('#slide2-description').html(events[best[1].eventID].description);
                 $('#slide2-loca').html(events[best[1].eventID].eventLocation.locationString);
                 $('#slide2-time').html(events[best[1].eventID].times.start);
-                //$('#slide2').on("click", function(){
-                  // openModal(events[best[1].eventID]);
-                 //});
+                $('#slide2').on("click", function(){
+                  openModal(events[best[1].eventID]);
+                });
 
                 $('#slide3-head').html(events[best[2].eventID].eventData.name);
                 $('#slide3-description').html(events[best[2].eventID].description);
                 $('#slide3-loca').html(events[best[2].eventID].eventLocation.locationString);
                 $('#slide3-time').html(events[best[2].eventID].times.start);
-                //$('#slide3').on("click", function() {
-                  // openModal(events[best[2].eventID]);
-                 //});
+                $('#slide3').on("click", function() {
+                  openModal(events[best[2].eventID]);
+                });
 
 
             });
