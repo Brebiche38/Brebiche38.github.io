@@ -304,8 +304,7 @@ function getEvents(start, end, location, range, category, callback) { // Warning
 						get(events.child("locations").child(eventID), function (eventLocation) {
 							if (distance(location, eventLocation) < range) {
 								get(events.child("descriptions").child(eventID), function (description) {
-                                    //callback(eventID, eventSnapshot.val(), time, eventLocation, description);
-                                    alert(description);
+                                    callback(eventID, eventSnapshot.val(), times, eventLocation, description);
 								});
 							}
 						});
