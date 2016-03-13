@@ -135,13 +135,13 @@
             <div class="row">
               <div class="my-slide" id="slide1">
                 <h4 id="slide1-head"> </h4>
-                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <p class="event-description" id="slide1-description"></p>
                 <div class="row">
                   <div class="col-lg-6 text-left">
-                    <p class="event-time">Where is the love?</p>
+                    <p class="event-time" id="slide1-loca"></p>
                   </div>
                   <div class="col-lg-6 text-right">
-                    <p class="event-time"> TIIIIME is on my side </p>
+                    <p class="event-time" id="slide1-time"></p>
                   </div>
                 </div>
               </div>
@@ -149,13 +149,13 @@
             <div class="row">
               <div class="my-slide" id="slide2">
                 <h4 id="slide2-head"></h4>
-                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <p class="event-description" id="slide2-description"></p>
                 <div class="row">
                   <div class="col-lg-6 text-left">
-                    <p class="event-time">Where is the love?</p>
+                    <p class="event-time" id="slide2-loca"></p>
                   </div>
                   <div class="col-lg-6 text-right">
-                    <p class="event-time"> TIIIIME is on my side </p>
+                    <p class="event-time" id="slide2-time"></p>
                   </div>
                 </div>
               </div>
@@ -163,13 +163,13 @@
             <div class="row">
               <div class="my-slide" id="slide3">
                 <h4 id="slide3-head"></h4>
-                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <p class="event-description" id="slide3-description"></p>
                 <div class="row">
                   <div class="col-lg-6 text-left">
-                    <p class="event-time">Where is the love?</p>
+                    <p class="event-time" id="slide3-loca"></p>
                   </div>
                   <div class="col-lg-6 text-right">
-                    <p class="event-time"> TIIIIME is on my side </p>
+                    <p class="event-time" id="slide3-time"></p>
                   </div>
                 </div>
 
@@ -534,9 +534,21 @@
                     return distance(a.eventLocation.coords.lat, position.coords.latitude, a.eventLocation.coords.lng, position.coords.longitude) -
                            distance(b.eventLocation.coords.lat, position.coords.latitude, b.eventLocation.coords.lng, position.coords.longitude)
                 });
-             
+
                 $('#slide1-head').html(events[best[0].eventID].eventData.name);
+                $('#slide1-description').html(events[best[0].eventID].description);
+                $('#slide1-loca').html(events[best[0].eventID].eventLocation.locationString);
+                $('#slide1-time').html(events[best[0].eventID].times.start);
+                
                 $('#slide2-head').html(events[best[1].eventID].eventData.name);
+                $('#slide2-description').html(events[best[1].eventID].description);
+                $('#slide2-loca').html(events[best[1].eventID].eventLocation.locationString);
+                $('#slide2-time').html(events[best[1].eventID].times.start);
+                
+                $('#slide3-head').html(events[best[2].eventID].eventData.name);
+                $('#slide3-description').html(events[best[2].eventID].description);
+                $('#slide3-loca').html(events[best[2].eventID].eventLocation.locationString);
+                $('#slide3-time').html(events[best[2].eventID].times.start);
             });
         });
 
