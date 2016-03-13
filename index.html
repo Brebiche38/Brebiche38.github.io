@@ -50,10 +50,6 @@
 
     }
     google.maps.event.addDomListener(window, 'load', initialize);
-    var events = getEvents(); //supposition
-    var event0 = events[0];
-    var event1 = events[1];
-    var event2 = events[2];
     </script>
 </head>
 
@@ -128,25 +124,43 @@
                     </div>
                 </div>
                 <div class="col-lg-6 text-right">
-                    <button type="button" class="btn btn-primary">Search for some fun</button>
+                    <button type="button" class="btn btn-primary">Search</button>
                 </div>
             </div>
           </form>
           <hr/>
-          <div class="col-lg-12">
+          <div class="col-lg-12 slider">
             <div class="row">
               <div class="my-slide" id="slide1">
-                <h3>Hello</h3>
+                <h4 id="slide1-head"> </h4>
+                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time">Where is the love?</p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time"> TIIIIME is on my side </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="row">
               <div class="my-slide" id="slide2">
-                <h3>You fool</h3>
+                <h4 id="slide2-head"></h4>
+                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time">Where is the love?</p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time"> TIIIIME is on my side </p>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="row">
               <div class="my-slide" id="slide3">
-                <h3>I love you</h3>
+                <h4 id="slide3-head"></h4>
                 <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
                 <div class="row">
                   <div class="col-lg-6 text-left">
@@ -393,8 +407,13 @@
                     eventLocation : eventLocation,
                     description : description
                 }
+                var best = events.slice(0, 4);
+                alert(best);
+                $('#slide1-head').html(best[0].name);
+                $('#slide2-head').html(best[1].name);
             });
         });
+
 
       }
     </script>
