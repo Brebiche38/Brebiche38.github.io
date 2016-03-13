@@ -13,7 +13,7 @@
     <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
     <script type="text/javascript" src="js/db.js"></script>
     <script>
-        var state = {
+    var state = {
       events: []
     };
 
@@ -140,7 +140,7 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="nbP">Number of participant:</label>
-                                            <p>5</p>
+                                            <div id="nbP"></div>
                                         </div>
                                         <div class="form-group">
                                             <label for="where">Where</label>
@@ -155,7 +155,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Going</button>
+                            <button type="button" class="btn btn-primary" id="goingButton">Going</button>
                             <button type="button" class="btn btn-success">Interested</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
@@ -170,7 +170,7 @@
     <script src="dist/js/bootstrap.min.js"></script>
     <script src="js/dropdown.js"></script>
     <script type="text/javascript">
-        document.getElementById("range").value = 20;
+      document.getElementById("range").value = 20;
       document.getElementById("start").value = new Date("2015-01-01");
       document.getElementById("end").value = new Date("2015-12-31");
 
@@ -190,12 +190,30 @@
       }
       
       function openModal(eventData) {
+          console.log("blah");
           $('#eventModal').modal('show');
           $("#description").html(eventData.description);
+          $("#nbP").html(eventData.eventData.participantcount || 0);
           //$("#eventLocation").html(eventData.eventLocation);
-          $("#times").html(eventData.times.start + eventData.times.end);
+          $("#times").html(eventData.times.start + '\n' + eventData.times.end);
           $("#eventName").html(eventData.eventData.name);
           $('#categorie').html(eventData.eventData.category);
+          isSubscribedTo(eventData.eventID, function (subscribed) {
+            console.log(eventData.eventID);
+            console.log(subscribed);
+            if (subscribed) {
+              $('#goingButton').prop("disabled", true);
+              $('#goingButton').unbind("click");              
+            } else {
+              $('#goingButton').prop("disabled", false);
+              $('#goingButton').bind("click", {id: eventData.eventID}, function (event) {
+                console.log(event.data.id);
+                subscribe(event.data.id);
+                $('#goingButton').prop("disabled", true);
+                $('#goingButton').unbind("click");
+              });              
+            }
+          });
       }
       
       query();

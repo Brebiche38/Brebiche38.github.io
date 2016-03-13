@@ -170,6 +170,9 @@ function removeDisponibilityPeriod(id) {
 function subscribe(eventID) {
 	users.child("events").child(userID).child(eventID).set(true);
 	events.child("subscribers").child(eventID).child(userID).set(true);
+	events.child("eventinfo").child(eventID).child("participantcount").transaction(function (current_value) {
+		return (current_value || 0) + 1;
+	});
 
 	// Notifications...
 }
@@ -200,6 +203,12 @@ function getSubscribers(eventID, callback) {
 		}
 		callback(subscribers);
 	});
+}
+
+function isSubscribedTo(eventID, callback) {
+	get(users.child("events").child(userID).child(eventID), function (subscribed) {
+		callback(subscribed);
+	})
 }
 
 /* EVENT MANAGEMENT */
