@@ -8,7 +8,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/panelevents.css" rel="stylesheet" />
+    <link href="css/eventslide.css" rel="stylesheet" />
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js"></script>
     <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
     <script type="text/javascript" src="js/db.js"></script>
@@ -48,6 +48,10 @@
 
     }
     google.maps.event.addDomListener(window, 'load', initialize);
+    var events = getEvents(); //supposition
+    var event0 = events[0];
+    var event1 = events[1];
+    var event2 = events[2];
     </script>
 </head>
 
@@ -111,6 +115,34 @@
                     <button type="button" class="btn btn-primary">Search for some fun</button>
                 </div>
             </div>
+          <hr/>
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="my-slide" id="slide1">
+                <h3>Hello</h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="my-slide" id="slide2">
+                <h3>You fool</h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="my-slide" id="slide3">
+                <h3>I love you</h3>
+                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time">Where is the love?</p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time"> TIIIIME is on my side </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
  </div>
 
         <div id="container" style="width:70%;height: 100%">
@@ -128,7 +160,7 @@
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    
+
                                     <label>Description</label>
                                     <br>
                                     <div id="description"></div>
@@ -188,7 +220,7 @@
         });
         markers.push(marker);
       }
-      
+
       function openModal(eventData) {
           $('#eventModal').modal('show');
           $("#description").html(eventData.description);
@@ -197,14 +229,14 @@
           $("#eventName").html(eventData.eventData.name);
           $('#categorie').html(eventData.eventData.category);
       }
-      
+
       query();
       function query() {
 
         for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(map);
         }
-  
+
         var start = new Date(document.getElementById("start").value);
         var end = new Date(document.getElementById("end").value);
         var range = document.getElementById("range").value;
@@ -215,10 +247,10 @@
             getEvents(start, end, position.coords, range, category, function(eventID, eventData, times, eventLocation, description){
                 addMarker(eventLocation,map,eventID);
                 events.eventID = {
-                    eventID : eventID, 
-                    eventData : eventData, 
-                    times : times, 
-                    eventLocation : eventLocation, 
+                    eventID : eventID,
+                    eventData : eventData,
+                    times : times,
+                    eventLocation : eventLocation,
                     description : description
                 }
             });

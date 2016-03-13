@@ -1,0 +1,27 @@
+.my-slide {
+  height:20%;
+  width: 100%;
+  background-color: orange;
+  padding: 25px;
+  margin: 5px;
+}
+.my-slide:hover {
+  border: 5px solid black;
+  margin-bottom: 0px;
+  margin-top:0px;
+  padding-left:20px;
+}
+
+.event-description {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#slide1 {
+  background-color: lightblue;
+}
+
+#slide3{
+  background-color: lightgreen;
+}
