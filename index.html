@@ -13,9 +13,11 @@
     <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
     <script type="text/javascript" src="js/db.js"></script>
     <script>
-        var state = {
+    var state = {
       events: []
     };
+
+    var markerIcon = 'img/pin_red_small.png';
 
     /*createEvent(
       "New Event",
@@ -59,24 +61,38 @@
 
     <div id="container" style="width:100%;height: 100%">
         <div id="container" style="width:30%;height: 100%;float: right;padding:20px">
+            <div align="right" id="not-connected">
+              <button type="button" class="btn btn-default btn-xs" onclick="loginModal();">Login</button>
+              <button type="button" class="btn btn-primary btn-xs" onclick="registerModal();">Register</button>
+            </div>
+            <div align="right" id="connected" hidden>
+              <span id="identifier"></span>
+              <button type="button" class="btn btn-primary btn-xs" onclick="createEventModal()">Create Event</button>
+              <button type="button" class="btn btn-info btn-xs" onclick="settingsModal()">Settings</button>
+              <button type="button" class="btn btn-default btn-xs" onclick="logoutControl()">Logout</button>
+            </div>
             <div align="center">
                 <img src="img/logo.png" height="100px" />
             </div>
-            <form>
+            <form class="form-horizontal">
                 <div class="form-group">
-                    <label for="range">Search range</label>
-                    <input type="number" class="form-control" id="range" value="" onchange="query();" />
+                    <label for="range" class="col-sm-3 control-label">Search range</label>
+                    <div class="col-sm-9">
+                      <input type="number" class="form-control" id="range" value="" onchange="query();" />
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="start">From</label>
-                    <input type="date" class="form-control" id="start" value="" onchange="query();" />
+                    <label for="start" class="col-sm-3 control-label">From</label>
+                    <div class="col-sm-9">
+                      <input type="date" class="form-control" id="start" value="" onchange="query();" />
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="end">To</label>
-                    <input type="date" class="form-control" id="end" value="" onchange="query();" />
+                    <label for="end" class="col-sm-3 control-label">To</label>
+                    <div class="col-sm-9">
+                      <input type="date" class="form-control" id="end" value="" onchange="query();" />
+                    </div>
                 </div>
-            </form>
-
             <div class="row">
                 <div class="col-lg-6 text-left">
                     <div class="dropdown">
@@ -115,6 +131,7 @@
                     <button type="button" class="btn btn-primary">Search for some fun</button>
                 </div>
             </div>
+          </form>
           <hr/>
           <div class="col-lg-12">
             <div class="row">
@@ -172,7 +189,7 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="nbP">Number of participant:</label>
-                                            <p>5</p>
+                                            <div id="nbP"></div>
                                         </div>
                                         <div class="form-group">
                                             <label for="where">Where</label>
@@ -187,10 +204,77 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Going</button>
-                            <button type="button" class="btn btn-success">Interested</button>
+                            <button type="button" class="btn btn-primary" id="goingButton"></button>
+                            <!--<button type="button" class="btn btn-success">Interested</button>-->
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="createEventModal" role="dialog">
+              <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4>Create event</h4>
+                      </div>
+                      <div class="modal-body">
+
+                      </div>
+                      <div class="modal-footer">
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="modal fade" id="loginModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4>Login</h4>
+                        </div>
+                        <form>
+                          <div class="modal-body" id="loginModalBody">
+                              <div class="form-group">
+                                  <label for="loginEmail">Email</label>
+                                  <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email address" />
+                              </div>
+                              <div class="form-group">
+                                  <label for="loginPassword">Password</label>
+                                  <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" />
+                              </div>
+                              <p id="loginMessage"></p>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" onclick="loginControl();">Login</button>
+                          </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="registerModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4>Register</h4>
+                        </div>
+                        <form>
+                          <div class="modal-body" id="registerModalBody">
+                            <div class="form-group">
+                                <label for="registerEmail">Email</label>
+                                <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email address" />
+                            </div>
+                            <div class="form-group">
+                                <label for="registerPassword">Password</label>
+                                <input type="password" class="form-control" id="registerPassword" placeholder="Enter your password" />
+                            </div>
+                            <p id="registerMessage"></p>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" onclick="registerControl();">Register</button>
+                          </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -202,21 +286,22 @@
     <script src="dist/js/bootstrap.min.js"></script>
     <script src="js/dropdown.js"></script>
     <script type="text/javascript">
-        document.getElementById("range").value = 20;
+      document.getElementById("range").value = 20;
       document.getElementById("start").value = new Date("2015-01-01");
       document.getElementById("end").value = new Date("2015-12-31");
 
-      function addMarker(location, map,eventID) {
+      function addMarker(location, map, eventID) {
         // Add the marker at the clicked location, and add the next-available label
         // from the array of alphabetical characters.
         var marker = new google.maps.Marker({
           position: { lat: location.lat, lng: location.lon },
-          label: labels[labelIndex++ % labels.length],
-          map: map
+          //label: labels[labelIndex++ % labels.length],
+          map: map,
+          icon: markerIcon
         });
 
         marker.addListener('click', function() {
-            openModal(events.eventID)
+            openModal(events[eventID]);
         });
         markers.push(marker);
       }
@@ -224,10 +309,65 @@
       function openModal(eventData) {
           $('#eventModal').modal('show');
           $("#description").html(eventData.description);
+          $("#nbP").html(eventData.eventData.participantcount || 0);
           //$("#eventLocation").html(eventData.eventLocation);
-          $("#times").html(eventData.times.start + eventData.times.end);
+          $("#times").html(eventData.times.start + '\n' + eventData.times.end);
           $("#eventName").html(eventData.eventData.name);
           $('#categorie').html(eventData.eventData.category);
+          isSubscribedTo(eventData.eventID, function (subscribed) {
+            if (subscribed) {
+              $('#goingButton').html("Going");
+              $('#goingButton').prop("disabled", true);
+              $('#goingButton').unbind("click");
+            } else {
+              $('#goingButton').html("Go!");
+              $('#goingButton').prop("disabled", false);
+              $('#goingButton').bind("click", {id: eventData.eventID}, function (event) {
+                console.log(event.data.id);
+                subscribe(event.data.id);
+                $('#goingButton').html("Going");
+                $('#nbP').html((eventData.eventData.participantcount || 0) + 1);
+                $('#goingButton').prop("disabled", true);
+                $('#goingButton').unbind("click");
+              });
+            }
+          });
+      }
+
+      function loginModal() {
+        $('#loginModal').modal('show');
+
+      }
+
+      function registerModal() {
+        $('#registerModal').modal('show');
+
+      }
+
+      function createEventModal() {
+        $('#createEventModal').modal('show');
+      }
+
+      function loginControl() {
+        login($('#loginEmail').val(), $('#loginPassword').val(), function (uid) {
+          $('#loginModal').modal('hide');
+          $('#identifier').html($('#loginEmail').val());
+          $('#not-connected').prop("hidden", true);
+          $('#connected').prop("hidden", false);
+        }, function () {
+          $('#loginModalBody').addClass("has-error");
+          $('#loginMessage').html("Invalid email or password");
+        })
+      }
+
+      function registerControl() {
+        createUser($('#registerEmail').val(), $('#registerPassword').val(), function (uid) {
+          $('#registerModal').modal('hide');
+          // Hide button
+        }, function () {
+          $('#registerModalBody').addClass("has-error");
+          $('#registerMessage').html("Invalid email or password");
+        })
       }
 
       query();
@@ -246,7 +386,7 @@
 
             getEvents(start, end, position.coords, range, category, function(eventID, eventData, times, eventLocation, description){
                 addMarker(eventLocation,map,eventID);
-                events.eventID = {
+                events[eventID] = {
                     eventID : eventID,
                     eventData : eventData,
                     times : times,

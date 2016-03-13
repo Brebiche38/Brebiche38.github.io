@@ -9,7 +9,7 @@ function get(ref, callback) {
 }
 
 /* LOGIN (need callbacks, except logout) */
-var userID = 1;
+var userID = null;
 
 // returns user ID
 function createUser(email, password, success, failure) {
@@ -53,11 +53,12 @@ function createUser(email, password, success, failure) {
 function login(email, password, success, failure) {
 	db.authWithPassword({
 		email: email,
-		password: password		
+		password: password
 	}, function (error, userData) {
 		if (error) {
 			failure();
 		} else {
+			userID = userData.uid;
 			success(userData.uid);
 		}
 	})
@@ -170,6 +171,10 @@ function removeDisponibilityPeriod(id) {
 function subscribe(eventID) {
 	users.child("events").child(userID).child(eventID).set(true);
 	events.child("subscribers").child(eventID).child(userID).set(true);
+	events.child("eventinfo").child(eventID).child("participantcount").transaction(function (current_value) {
+		//console.log("werein");
+		return (current_value || 0) + 1;
+	});
 
 	// Notifications...
 }
@@ -200,6 +205,12 @@ function getSubscribers(eventID, callback) {
 		}
 		callback(subscribers);
 	});
+}
+
+function isSubscribedTo(eventID, callback) {
+	get(users.child("events").child(userID).child(eventID), function (subscribed) {
+		callback(subscribed);
+	})
 }
 
 /* EVENT MANAGEMENT */
