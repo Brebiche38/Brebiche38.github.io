@@ -8,7 +8,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/panelevents.css" rel="stylesheet" />
+    <link href="css/eventslide.css" rel="stylesheet" />
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js"></script>
     <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
     <script type="text/javascript" src="js/db.js"></script>
@@ -126,10 +126,56 @@
                     </div>
                 </div>
                 <div class="col-lg-6 text-right">
-                    <button type="button" class="btn btn-primary">Search for some fun</button>
+                    <button type="button" class="btn btn-primary">Search</button>
                 </div>
             </div>
-        </form>
+          </form>
+          <hr/>
+          <div class="col-lg-12 slider">
+            <div class="row">
+              <div class="my-slide" id="slide1">
+                <h4 id="slide1-head"> </h4>
+                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time">Where is the love?</p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time"> TIIIIME is on my side </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="my-slide" id="slide2">
+                <h4 id="slide2-head"></h4>
+                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time">Where is the love?</p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time"> TIIIIME is on my side </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="my-slide" id="slide3">
+                <h4 id="slide3-head"></h4>
+                <p class="event-description">Something about the event blablablabalbalbalbalbalablabalbalbalablabla ljpsdojfalkjsdlf psdpfojlksd sppojsldkf </p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time">Where is the love?</p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time"> TIIIIME is on my side </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
  </div>
 
         <div id="container" style="width:70%;height: 100%">
@@ -147,7 +193,7 @@
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    
+
                                     <label>Description</label>
                                     <br>
                                     <div id="description"></div>
@@ -314,7 +360,7 @@
         });
         markers.push(marker);
       }
-      
+
       function openModal(eventData) {
           $('#eventModal').modal('show');
           $("#description").html(eventData.description);
@@ -327,7 +373,7 @@
             if (subscribed) {
               $('#goingButton').html("Going");
               $('#goingButton').prop("disabled", true);
-              $('#goingButton').unbind("click");            
+              $('#goingButton').unbind("click");
             } else {
               $('#goingButton').html("Go!");
               $('#goingButton').prop("disabled", false);
@@ -338,7 +384,7 @@
                 $('#nbP').html((eventData.eventData.participantcount || 0) + 1);
                 $('#goingButton').prop("disabled", true);
                 $('#goingButton').unbind("click");
-              });              
+              });
             }
           });
       }
@@ -416,7 +462,7 @@
         for (var i = 0; i < markers.length; i++) {
             markers[i].setMap(map);
         }
-  
+
         var start = new Date(document.getElementById("start").value);
         var end = new Date(document.getElementById("end").value);
         var range = document.getElementById("range").value;
@@ -426,14 +472,19 @@
             getEvents(start, end, position.coords, range, category, function(eventID, eventData, times, eventLocation, description){
                 addMarker(eventLocation.coords,map,eventID);
                 events[eventID] = {
-                    eventID : eventID, 
-                    eventData : eventData, 
-                    times : times, 
-                    eventLocation : eventLocation, 
+                    eventID : eventID,
+                    eventData : eventData,
+                    times : times,
+                    eventLocation : eventLocation,
                     description : description
                 }
+                var best = events.slice(0, 4);
+                alert(best);
+                $('#slide1-head').html(best[0].name);
+                $('#slide2-head').html(best[1].name);
             });
         });
+
 
       }
     </script>
