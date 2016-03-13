@@ -31,6 +31,7 @@
     var map;
     var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var labelIndex = 0;
+    var markers = [];
     function initialize() {
       var mapProp = {
         center:new google.maps.LatLng(46.5, 6.5),
@@ -185,6 +186,7 @@
         marker.addListener('click', function() {
             openModal(events.eventID)
         });
+        markers.push(marker);
       }
       
       function openModal(eventData) {
@@ -198,6 +200,11 @@
       
       query();
       function query() {
+
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
+  
         var start = new Date(document.getElementById("start").value);
         var end = new Date(document.getElementById("end").value);
         var range = document.getElementById("range").value;
