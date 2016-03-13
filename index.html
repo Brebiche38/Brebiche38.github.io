@@ -366,7 +366,10 @@
 
       function openModal(eventData) {
           $('#eventModal').modal('show');
-          //$('#eventHost').html(eventData.contactinfo.name);
+          console.log(eventData);
+          getUserName(eventData.eventData.host, function (name) {
+            $('#eventHost').html(name);            
+          });
           $("#description").html(eventData.description);
           $("#nbP").html(eventData.eventData.participantcount || 0);
           $("#eventLocation").html(eventData.eventLocation.locationString);
@@ -382,7 +385,6 @@
               $('#goingButton').html("Go!");
               $('#goingButton').prop("disabled", false);
               $('#goingButton').bind("click", {id: eventData.eventID}, function (event) {
-                console.log(event.data.id);
                 subscribe(event.data.id);
                 $('#goingButton').html("Going");
                 $('#nbP').html((eventData.eventData.participantcount || 0) + 1);

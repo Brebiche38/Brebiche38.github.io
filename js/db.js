@@ -113,6 +113,10 @@ function getName(callback) {
 	get(users.child("userinfo").child(userID).child("name"), callback);
 }
 
+function getUserName(user, callback) {
+	get(users.child("userinfo").child(user).child("name"), callback);	
+}
+
 function getEmail(callback) {
 	get(users.child("userinfo").child(userID).child("contactinfo").child("email"), callback);
 }
@@ -306,10 +310,6 @@ function getEventDescription(eventID, callback) {
 	get(events.child("descriptions").child(eventID), callback);
 }
 
-function distance(location, eventLocation) {
-    return Math.sqrt(Math.pow((location.latitude - eventLocation.lat), 2) + Math.pow((location.longitude - eventLocation.lon), 2));
-}
-
 /* SEARCH */
 
 function getEvents(start, end, location, range, category, callback) { // Warning, callback is called for each result
@@ -343,7 +343,7 @@ function distance (loc1, loc2) {
 	var lat2 = loc2.coords.lat;
 	var lng2 = loc2.coords.lng;
 
-	var R = 6371000; // metres
+	var R = 6371; // metres
 	var phi1 = lat1.toRadians();
 	var phi2 = lat2.toRadians();
 	var deltaphi = (lat2-lat1).toRadians();
