@@ -287,27 +287,30 @@ function getEventDescription(eventID, callback) {
 	get(events.child("descriptions").child(eventID), callback);
 }
 
+function distance(location, eventLocation) {
+    return Math.sqrt(Math.pow((location.latitude - eventLocation.lat), 2) + Math.pow((location.longitude - eventLocation.lon), 2));
+}
+
 /* SEARCH */
 
 function getEvents(start, end, location, range, category, callback) { // Warning, callback is called for each result
-	events.child("eventinfo").once("value", function (events) {
-		console.log("blue");
-		events.forEach(function(eventSnapshot) {
+	events.child("eventinfo").once("value", function (eventsDATA) {		
+        eventsDATA.forEach(function(eventSnapshot) {
 			var eventID = eventSnapshot.key();
 			if (eventSnapshot.val().category == category) {
-				console.log(events.child("time").child(eventID));
-				get(events.child("time").child(eventID), function (times) {
-					console.log(times);
-					if (start < new Date(times.start) && new Date(times.end) < end) {
+                events.child("time").child(eventSnapshot.key()).on("value", function (timeSnapshot) {
+                    var times = timeSnapshot.val();
+		            if (start < new Date(times.start) && new Date(times.end) < end) {
 						get(events.child("locations").child(eventID), function (eventLocation) {
 							if (distance(location, eventLocation) < range) {
 								get(events.child("descriptions").child(eventID), function (description) {
-									callback(eventID, eventSnapshot.val(), time, eventLocation, description);							
+                                    //callback(eventID, eventSnapshot.val(), time, eventLocation, description);
+                                    alert(description);
 								});
 							}
 						});
 					}
-				});
+	            });
 			}
 		});
 	});

@@ -86,18 +86,17 @@
       document.getElementById("start").value = new Date("2015-01-01");
       document.getElementById("end").value = new Date("2015-12-31");
 
-      query();
-
       function query() {
         var start = new Date(document.getElementById("start").value);
         var end = new Date(document.getElementById("end").value);
-        var location = state.position;
         var range = document.getElementById("range").value;
         var category = "Punching Ruben";
         //var category = document.getElementById("category").value;
-
-        // TODO
-        state.events = getEvents(start, end, location, range, category);
+        navigator.geolocation.getCurrentPosition(function(position){
+            
+            state.events = getEvents(start, end, position.coords, range, category);
+        });
+        
       }
     </script>
 
