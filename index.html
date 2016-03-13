@@ -17,7 +17,7 @@
       events: []
     };
 
-    var markerIcon = 'img/pin_red_small.png';
+    var markerIcon = 'img/pin1.png';
 
     /*createEvent(
       "New Event",
@@ -348,6 +348,9 @@
         console.log("addMarker");
         // Add the marker at the clicked location, and add the next-available label
         // from the array of alphabetical characters.
+        var rand = Math.floor(Math.random() * 3);
+        var str = 'img/pin'.concat(rand).concat('.png');
+        var markerIcon = str;
         var marker = new google.maps.Marker({
           position: { lat: location.lat, lng: location.lng },
           //label: labels[labelIndex++ % labels.length],
