@@ -31,6 +31,7 @@
       "Gonna be fuun!"
     );*/
     var map;
+    var geocoder;
     var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     var labelIndex = 0;
     var markers = [];
@@ -48,6 +49,7 @@
 
       map.setOptions({styles: [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#6195a0"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#e6f3d6"},{"visibility":"on"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45},{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#f4d2c5"},{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"labels.text","stylers":[{"color":"#4e4e4e"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#f4f4f4"}]},{"featureType":"road.arterial","elementType":"labels.text.fill","stylers":[{"color":"#787878"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#eaf6f8"},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"color":"#eaf6f8"}]}]});
 
+      geocoder = new google.maps.Geocoder();
     }
     google.maps.event.addDomListener(window, 'load', initialize);
     </script>
@@ -233,9 +235,47 @@
                           <h4>Create event</h4>
                       </div>
                       <div class="modal-body">
-
+                        <form>
+                          <div class="form-group">
+                            <label for="createEventName">Event name</label>
+                            <input type="text" class="form-control" id="createEventName"></input>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label for="createEventStart">Start</label>
+                              <input type="datetime" class="form-control" id="createEventStart"></input>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="createEventEnd">End</label>
+                              <input type="datetime" class="form-control" id="createEventEnd"></input>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-8">
+                              <label for="createEventLocation">Location</label>
+                              <input type="text" class="form-control" id="createEventLocation"></input>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="createEventCategory">Category</label>
+                              <select class="form-control" id="createEventCategory">
+                                <option>Environmental</option>
+                                <option>Social work</option>
+                                <option>Social discourse</option>
+                                <option>Neighbourhood friendship</option>
+                                <option>Farming</option>
+                                <option>Collaborative Art</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="createEventDescription">Description</label>
+                            <textarea class="form-control" rows="3" id="createEventDescription"></textarea>
+                          </div>
+                          <p id="createEventMessage"></p>
+                        </form>
                       </div>
                       <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="createEventButton" onclick="createEventControl()">Create</button>
                       </div>
                   </div>
               </div>
@@ -305,6 +345,7 @@
       document.getElementById("end").value = new Date("2015-12-31");
 
       function addMarker(location, map, eventID) {
+        console.log("addMarker");
         // Add the marker at the clicked location, and add the next-available label
         // from the array of alphabetical characters.
         var rand = Math.floor(Math.random() * 3);
@@ -362,7 +403,9 @@
       }
 
       function createEventModal() {
-        $('#createEventModal').modal('show');
+        $('#createEventModal').modal('show'); 
+        $('#createEventStart').val(new Date().toString());       
+        $('#createEventEnd').val(new Date().toString());       
       }
 
       function loginControl() {
@@ -387,6 +430,35 @@
         })
       }
 
+      function createEventControl() {
+        var locationString = $('#createEventLocation').val();
+        geocoder.geocode({ address: locationString }, function (results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            var location = {
+              locationString: locationString,
+              coords: {
+                lat: results[0].geometry.location.lat(),
+                lng: results[0].geometry.location.lng()
+              }
+            }
+            var name = $('#createEventName').val();
+            var start = $('#createEventStart').val();
+            var end = $('#createEventEnd').val();
+            var category = $('#createEventCategory').val();
+            var description = $('#createEventDescription').val();
+
+            createEvent(name, location, start, end, category, description);
+
+            $('#createEventModal').modal('hide');
+            query();
+          } else {
+            $('#createEventModalBody').addClass("has-error");
+            $('#createEventMessage').html("Unable to find location");
+
+          }
+        })
+      }
+      
       query();
       function query() {
 
@@ -400,9 +472,8 @@
         var category = "Punching Ruben";
         //var category = document.getElementById("category").value;
         navigator.geolocation.getCurrentPosition(function(position){
-
             getEvents(start, end, position.coords, range, category, function(eventID, eventData, times, eventLocation, description){
-                addMarker(eventLocation,map,eventID);
+                addMarker(eventLocation.coords,map,eventID);
                 events[eventID] = {
                     eventID : eventID,
                     eventData : eventData,

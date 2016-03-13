@@ -216,6 +216,7 @@ function isSubscribedTo(eventID, callback) {
 /* EVENT MANAGEMENT */
 
 function createEvent(name, location, start, end, category, description) {
+	console.log(location);
 	var eventID = events.child("eventinfo").push({
 		name: name,
 		category: category,
@@ -251,7 +252,7 @@ function updateEventCategory(eventID, category) {
 }
 
 function updateEventLocation(eventID, location) {
-	events.child("location").child(userID).set(location);
+	events.child("locations").child(userID).set(location);
 }
 
 function updateEventStart(eventID, start) {
@@ -308,20 +309,43 @@ function getEvents(start, end, location, range, category, callback) { // Warning
 	events.child("eventinfo").once("value", function (eventsDATA) {		
         eventsDATA.forEach(function(eventSnapshot) {
 			var eventID = eventSnapshot.key();
-			if (eventSnapshot.val().category == category) {
+			console.log(eventID);
+			//if (eventSnapshot.val().category == category) {
                 events.child("time").child(eventSnapshot.key()).on("value", function (timeSnapshot) {
                     var times = timeSnapshot.val();
 		            if (start < new Date(times.start) && new Date(times.end) < end) {
 						get(events.child("locations").child(eventID), function (eventLocation) {
-							if (distance(location, eventLocation) < range) {
+							//if (distance(location, eventLocation) < range) {
 								get(events.child("descriptions").child(eventID), function (description) {
                                     callback(eventID, eventSnapshot.val(), times, eventLocation, description);
 								});
-							}
+							//}
 						});
 					}
 	            });
-			}
+			//}
 		});
 	});
+}
+
+function distance (loc1, loc2) {
+	var lat1 = loc1.coords.lat;
+	var lng1 = loc1.coords.lng;
+	var lat2 = loc2.coords.lat;
+	var lng2 = loc2.coords.lng;
+
+	var R = 6371000; // metres
+	var phi1 = lat1.toRadians();
+	var phi2 = lat2.toRadians();
+	var deltaphi = (lat2-lat1).toRadians();
+	var deltalambda = (lon2-lon1).toRadians();
+
+	var a = Math.sin(deltaphi/2) * Math.sin(deltaphi/2) +
+	        Math.cos(phi1) * Math.cos(phi2) *
+	        Math.sin(deltalambda/2) * Math.sin(deltalambda/2);
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+	var d = R * c;
+
+	return d;
 }
