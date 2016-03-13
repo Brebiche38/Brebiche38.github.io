@@ -1,5 +1,3 @@
-import Firebase from 'firebase';
-
 var db = new Firebase("https://amber-inferno-5019.firebaseIO.com/");
 var users = db.child("users");
 var events = db.child("events");
@@ -11,7 +9,7 @@ function get(ref, callback) {
 }
 
 /* LOGIN (need callbacks, except logout) */
-var userID = null;
+var userID = 1;
 
 // returns user ID
 function createUser(email, password, success, failure) {
@@ -207,18 +205,22 @@ function getSubscribers(eventID, callback) {
 /* EVENT MANAGEMENT */
 
 function createEvent(name, location, start, end, category, description) {
-	users.child("hostedevents").child(userID).child(eventID).set(true);
 	var eventID = events.child("eventinfo").push({
 		name: name,
 		category: category,
 		host: userID
-	});
+	}).toString();
+	eventID = eventID.substr(eventID.lastIndexOf('/') + 1);
+	console.log(eventID);
+	users.child("hostedevents").child(userID).child(eventID).set(true);
 	events.child("locations").child(eventID).set(location);
+	console.log("hey");
 	events.child("time").child(eventID).set({
-		start: start,
-		end: end
+		start: start.toString(),
+		end: end.toString()
 	});
-	events.child("descriptions").child(eventID).set(descriptions);
+	console.log("wuhu");
+	events.child("descriptions").child(eventID).set(description);
 }
 
 function deleteEvent() {
@@ -288,14 +290,21 @@ function getEventDescription(eventID, callback) {
 /* SEARCH */
 
 function getEvents(start, end, location, range, category, callback) { // Warning, callback is called for each result
-	events.child("eventinfo").orderByChild("category").equalTo(category).once("value", function (eventSnapshot) {
-		var eventID = eventSnapshot.name();
-		get(events.child("time").child(eventID), function (time) {
-			if (start < new Date(time.start) && new Date(time.end) < end) {
-				get(events.child("locations").child(eventID), function (eventLocation) {
-					if (distance(location, eventLocation) < range) {
-						get(events.child("descriptions").child(eventID), function (description) {
-							callback(eventID, eventSnapshot.val(), time, eventLocation, description);							
+	events.child("eventinfo").once("value", function (events) {
+		console.log("blue");
+		events.forEach(function(eventSnapshot) {
+			var eventID = eventSnapshot.key();
+			if (eventSnapshot.val().category == category) {
+				console.log(events.child("time").child(eventID));
+				get(events.child("time").child(eventID), function (times) {
+					console.log(times);
+					if (start < new Date(times.start) && new Date(times.end) < end) {
+						get(events.child("locations").child(eventID), function (eventLocation) {
+							if (distance(location, eventLocation) < range) {
+								get(events.child("descriptions").child(eventID), function (description) {
+									callback(eventID, eventSnapshot.val(), time, eventLocation, description);							
+								});
+							}
 						});
 					}
 				});
