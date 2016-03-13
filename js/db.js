@@ -169,12 +169,16 @@ function removeDisponibilityPeriod(id) {
 /* SUBSCRIPTION */
 
 function subscribe(eventID) {
+	if (!userID) return false;
+
 	users.child("events").child(userID).child(eventID).set(true);
 	events.child("subscribers").child(eventID).child(userID).set(true);
 	events.child("eventinfo").child(eventID).child("participantcount").transaction(function (current_value) {
 		//console.log("werein");
 		return (current_value || 0) + 1;
 	});
+
+	return true;
 
 	// Notifications...
 }
@@ -208,9 +212,12 @@ function getSubscribers(eventID, callback) {
 }
 
 function isSubscribedTo(eventID, callback) {
-	get(users.child("events").child(userID).child(eventID), function (subscribed) {
-		callback(subscribed);
-	})
+	if (userID) {
+		get(users.child("events").child(userID).child(eventID), function (subscribed) {
+			callback(subscribed);
+		});
+	}
+	callback(false);
 }
 
 /* EVENT MANAGEMENT */
@@ -313,15 +320,17 @@ function getEvents(start, end, location, range, category, callback) { // Warning
 			//if (eventSnapshot.val().category == category) {
                 events.child("time").child(eventSnapshot.key()).on("value", function (timeSnapshot) {
                     var times = timeSnapshot.val();
-		            if (start < new Date(times.start) && new Date(times.end) < end) {
+                    console.log(times.start);
+		            //if (start < new Date(times.start) && new Date(times.end) < end) {
 						get(events.child("locations").child(eventID), function (eventLocation) {
+							console.log(eventLocation.locationString);
 							//if (distance(location, eventLocation) < range) {
 								get(events.child("descriptions").child(eventID), function (description) {
                                     callback(eventID, eventSnapshot.val(), times, eventLocation, description);
 								});
 							//}
 						});
-					}
+					//}
 	            });
 			//}
 		});

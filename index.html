@@ -187,7 +187,7 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 id="eventName"></h4>
-                            <p class="modal-title">User</p>
+                            <p class="modal-title" id="eventHost"></p>
                         </div>
                         <div class="modal-body">
 
@@ -204,7 +204,7 @@
                                 <div class="col-md-4">
                                     <form>
                                         <div class="form-group">
-                                            <label for="nbP">Number of participant:</label>
+                                            <label for="nbP">Number of participants</label>
                                             <div id="nbP"></div>
                                         </div>
                                         <div class="form-group">
@@ -352,7 +352,7 @@
         var str = 'img/pin'.concat(rand).concat('.png');
         var markerIcon = str;
         var marker = new google.maps.Marker({
-          position: { lat: location.lat, lng: location.lon },
+          position: { lat: location.lat, lng: location.lng },
           //label: labels[labelIndex++ % labels.length],
           map: map,
           icon: markerIcon
@@ -366,9 +366,10 @@
 
       function openModal(eventData) {
           $('#eventModal').modal('show');
+          //$('#eventHost').html(eventData.contactinfo.name);
           $("#description").html(eventData.description);
           $("#nbP").html(eventData.eventData.participantcount || 0);
-          //$("#eventLocation").html(eventData.eventLocation);
+          $("#eventLocation").html(eventData.eventLocation.locationString);
           $("#times").html(eventData.times.start + '\n' + eventData.times.end);
           $("#eventName").html(eventData.eventData.name);
           $('#categorie').html(eventData.eventData.category);
