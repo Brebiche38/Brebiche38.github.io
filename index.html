@@ -184,7 +184,7 @@
             <div class="modal fade" id="eventModal" role="dialog">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <div class="modal-header">
+                        <div class="modal-header" >
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 id="eventName"></h4>
                             <p class="modal-title" id="eventHost"></p>
@@ -368,7 +368,7 @@
           $('#eventModal').modal('show');
           console.log(eventData);
           getUserName(eventData.eventData.host, function (name) {
-            $('#eventHost').html(name);            
+            $('#eventHost').html(name);
           });
           $("#description").html(eventData.description);
           $("#nbP").html(eventData.eventData.participantcount || 0);
@@ -406,9 +406,9 @@
       }
 
       function createEventModal() {
-        $('#createEventModal').modal('show'); 
-        $('#createEventStart').val(new Date().toString());       
-        $('#createEventEnd').val(new Date().toString());       
+        $('#createEventModal').modal('show');
+        $('#createEventStart').val(new Date().toString());
+        $('#createEventEnd').val(new Date().toString());
       }
 
       function loginControl() {
@@ -461,9 +461,9 @@
           }
         })
       }
-      
+
       query();
-            
+
       function distance (lat1, lat2,lon1, lon2) {
 
 	    var R = 6371; // metres
@@ -471,12 +471,12 @@
 	    var phi2 = lat2* Math.PI / 180;
 	    var deltaphi = (lat2-lat1)* Math.PI / 180;
 	    var deltalambda = (lon2-lon1)* Math.PI / 180;
-    
+
 	    var a = Math.sin(deltaphi/2) * Math.sin(deltaphi/2) +
 	        Math.cos(phi1) * Math.cos(phi2) *
 	        Math.sin(deltalambda/2) * Math.sin(deltalambda/2);
 	    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    
+
 	    var d = R * c;
 
     	return d;
@@ -504,30 +504,41 @@
                     eventLocation : eventLocation,
                     description : description
                 }
-                
+
                 best.push({eventID : eventID,eventLocation : eventLocation});
 
-                                
+
                 best.sort(function(a,b) {
                     return distance(a.eventLocation.coords.lat, position.coords.latitude, a.eventLocation.coords.lng, position.coords.longitude) -
                            distance(b.eventLocation.coords.lat, position.coords.latitude, b.eventLocation.coords.lng, position.coords.longitude)
                 });
-           
-  
+
+
                 $('#slide1-head').html(events[best[0].eventID].eventData.name);
                 $('#slide1-description').html(events[best[0].eventID].description);
                 $('#slide1-loca').html(events[best[0].eventID].eventLocation.locationString);
                 $('#slide1-time').html(events[best[0].eventID].times.start);
-                
+                $('#slide1').on("click", function(){
+                   openModal(events[best[0].eventID]);
+                 });
+
                 $('#slide2-head').html(events[best[1].eventID].eventData.name);
                 $('#slide2-description').html(events[best[1].eventID].description);
                 $('#slide2-loca').html(events[best[1].eventID].eventLocation.locationString);
                 $('#slide2-time').html(events[best[1].eventID].times.start);
-                
+                //$('#slide2').on("click", function(){
+                  // openModal(events[best[1].eventID]);
+                 //});
+
                 $('#slide3-head').html(events[best[2].eventID].eventData.name);
                 $('#slide3-description').html(events[best[2].eventID].description);
                 $('#slide3-loca').html(events[best[2].eventID].eventLocation.locationString);
                 $('#slide3-time').html(events[best[2].eventID].times.start);
+                //$('#slide3').on("click", function() {
+                  // openModal(events[best[2].eventID]);
+                 //});
+
+
             });
         });
 
