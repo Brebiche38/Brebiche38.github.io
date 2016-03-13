@@ -17,6 +17,8 @@
       events: []
     };
 
+    var markerIcon = 'img/pin_red.png';
+
     /*createEvent(
       "New Event",
       {
@@ -174,17 +176,18 @@
       document.getElementById("start").value = new Date("2015-01-01");
       document.getElementById("end").value = new Date("2015-12-31");
 
-      function addMarker(location, map,eventID) {
+      function addMarker(location, map, eventID) {
         // Add the marker at the clicked location, and add the next-available label
         // from the array of alphabetical characters.
         var marker = new google.maps.Marker({
           position: { lat: location.lat, lng: location.lon },
           label: labels[labelIndex++ % labels.length],
-          map: map
+          map: map,
+          icon: markerIcon
         });
 
         marker.addListener('click', function() {
-            openModal(events.eventID)
+            openModal(events[eventID]);
         });
         markers.push(marker);
       }
@@ -232,7 +235,7 @@
 
             getEvents(start, end, position.coords, range, category, function(eventID, eventData, times, eventLocation, description){
                 addMarker(eventLocation,map,eventID);
-                events.eventID = {
+                events[eventID] = {
                     eventID : eventID, 
                     eventData : eventData, 
                     times : times, 
