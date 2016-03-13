@@ -121,6 +121,10 @@ function getEmail(callback) {
 	get(users.child("userinfo").child(userID).child("contactinfo").child("email"), callback);
 }
 
+function getUserEmail(user, callback) {
+	get(users.child("userinfo").child(user).child("contactinfo").child("email"), callback);
+}
+
 function getPhoneNumber(callback) {
 	get(users.child("userinfo").child(userID).child("contactinfo").child("phonenumber"), callback);
 }
@@ -175,13 +179,20 @@ function removeDisponibilityPeriod(id) {
 function subscribe(eventID) {
 	if (!userID) return false;
 
-	users.child("events").child(userID).child(eventID).set(true);
-	events.child("subscribers").child(eventID).child(userID).set(true);
-	events.child("eventinfo").child(eventID).child("participantcount").transaction(function (current_value) {
-		//console.log("werein");
-		return (current_value || 0) + 1;
-	});
+	get(users.child("subscribers").child(eventID).child(userID), function (isSubscribed) {
+		if (isSubscribed) return;
 
+		users.child("events").child(userID).child(eventID).set(true);
+		events.child("subscribers").child(eventID).child(userID).set(true);
+		events.child("eventinfo").child(eventID).child("participantcount").transaction(function (current_value) {
+			//console.log("werein");
+			console.log(current_value)
+			var res = (current_value || 0) + 1;
+			console.log(res);
+			return res;
+		});
+
+	})
 	return true;
 
 	// Notifications...

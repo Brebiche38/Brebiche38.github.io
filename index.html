@@ -218,6 +218,11 @@
                                     </form>
                                 </div>
                             </div>
+                            <div id="attendees" hidden>
+                              <hr/>
+                              <h5>List of participants</h5>
+                              <p id="attendeesList"></p>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" id="goingButton"></button>
@@ -393,6 +398,23 @@
               });
             }
           });
+
+          // Attendees
+          if (eventData.eventData.host == userID) {
+            $('#attendees').prop("hidden", false);
+            getSubscribers(eventData.eventID, function (subscribers) {
+              console.log(subscribers);
+              $('#attendeesList').html("");
+              subscribers.forEach(function (uid) {
+                console.log(uid);
+                getUserName(uid, function (name) {
+                  getUserEmail(uid, function (email) {
+                    $('#attendeesList').append("<a href='mailto:" + email + "'>" + name + "</a>&nbsp;");
+                  });
+                });
+              });
+            });
+          }
       }
 
       function loginModal() {
@@ -512,9 +534,7 @@
                     return distance(a.eventLocation.coords.lat, position.coords.latitude, a.eventLocation.coords.lng, position.coords.longitude) -
                            distance(b.eventLocation.coords.lat, position.coords.latitude, b.eventLocation.coords.lng, position.coords.longitude)
                 });
-           
-                alert(JSON.stringify(best));
-  
+             
                 $('#slide1-head').html(events[best[0].eventID].eventData.name);
                 $('#slide2-head').html(events[best[1].eventID].eventData.name);
             });
