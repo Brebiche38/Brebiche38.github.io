@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Beehive</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/eventslide.css" rel="stylesheet" />
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
+    <script type="text/javascript" src="js/db.js"></script>
+    <script>
+    var state = {
+      events: []
+    };
+
+    var markerIcon = 'img/pin1.png';
+
+    /*createEvent(
+      "New Event",
+      {
+        lat: 46.5,
+        lon: 6.5
+      },
+      new Date(2015,03,13,15,00,00,0),
+      new Date(2015,03,13,16,00,00,0),
+      "Punching Ruben",
+      "Gonna be fuun!"
+    );*/
+    var map;
+    var geocoder;
+    var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var labelIndex = 0;
+    var markers = [];
+    function initialize() {
+      var mapProp = {
+        center:new google.maps.LatLng(46.5, 6.5),
+        zoom:10,
+        mapTypeId:google.maps.MapTypeId.ROADMAP
+      };
+      map=new google.maps.Map(document.getElementById("map"),mapProp);
+      navigator.geolocation.getCurrentPosition(function(position){
+        state.position = position.coords,
+        map.panTo(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+      });
+
+      map.setOptions({styles: [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#6195a0"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#e6f3d6"},{"visibility":"on"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45},{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#f4d2c5"},{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"labels.text","stylers":[{"color":"#4e4e4e"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#f4f4f4"}]},{"featureType":"road.arterial","elementType":"labels.text.fill","stylers":[{"color":"#787878"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#eaf6f8"},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"color":"#eaf6f8"}]}]});
+
+      geocoder = new google.maps.Geocoder();
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</head>
+
+<body style="height: 100%">
+
+    <div id="container" style="width:100%;height: 100%">
+        <div id="container" style="width:30%;height: 100%;float: right;padding:20px">
+            <div align="right" id="not-connected">
+              <button type="button" class="btn btn-default btn-xs" onclick="loginModal();">Login</button>
+              <button type="button" class="btn btn-primary btn-xs" onclick="registerModal();">Register</button>
+            </div>
+            <div align="right" id="connected" hidden>
+              <span id="identifier"></span>
+              <button type="button" class="btn btn-primary btn-xs" onclick="createEventModal()">Create Event</button>
+              <button type="button" class="btn btn-info btn-xs" onclick="settingsModal()">Settings</button>
+              <button type="button" class="btn btn-default btn-xs" onclick="logoutControl()">Logout</button>
+            </div>
+            <div align="center">
+                <img src="img/logo.png" height="100px" />
+            </div>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="range" class="col-sm-3 control-label">Search range</label>
+                    <div class="col-sm-9">
+                      <input type="number" class="form-control" id="range" value="" onchange="query();" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="start" class="col-sm-3 control-label">From</label>
+                    <div class="col-sm-9">
+                      <input type="date" class="form-control" id="start" value="" onchange="query();" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="end" class="col-sm-3 control-label">To</label>
+                    <div class="col-sm-9">
+                      <input type="date" class="form-control" id="end" value="" onchange="query();" />
+                    </div>
+                </div>
+            <div class="row">
+                <div class="col-lg-6 text-left">
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            Categories <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#" class="medium" data-value="option1" tabIndex="-1">
+                                    <input type="checkbox" />&nbsp;Environmental</a>
+                            </li>
+                            <li>
+                                <a href="#" class="medium" data-value="option2" tabIndex="-1">
+                                    <input type="checkbox" />&nbsp;Social work</a>
+                            </li>
+                            <li>
+                                <a href="#" class="medium" data-value="option3" tabIndex="-1">
+                                    <input type="checkbox" />&nbsp;Social discourse</a>
+                            </li>
+                            <li>
+                                <a href="#" class="medium" data-value="option4" tabIndex="-1">
+                                    <input type="checkbox" />&nbsp;Neighbourhood friendship</a>
+                            </li>
+                            <li>
+                                <a href="#" class="medium" data-value="option5" tabIndex="-1">
+                                    <input type="checkbox" />&nbsp;Farming</a>
+                            </li>
+                            <li>
+                                <a href="#" class="medium" data-value="option6" tabIndex="-1">
+                                    <input type="checkbox" />&nbsp;Collaborative Art</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-right">
+                    <button type="button" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+          </form>
+          <hr/>
+          <div class="col-lg-12 slider">
+            <div class="row">
+              <div class="my-slide" id="slide1">
+                <h4 id="slide1-head"> </h4>
+                <p class="event-description" id="slide1-description"></p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time" id="slide1-loca"></p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time" id="slide1-time"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="my-slide" id="slide2">
+                <h4 id="slide2-head"></h4>
+                <p class="event-description" id="slide2-description"></p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time" id="slide2-loca"></p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time" id="slide2-time"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="my-slide" id="slide3">
+                <h4 id="slide3-head"></h4>
+                <p class="event-description" id="slide3-description"></p>
+                <div class="row">
+                  <div class="col-lg-6 text-left">
+                    <p class="event-time" id="slide3-loca"></p>
+                  </div>
+                  <div class="col-lg-6 text-right">
+                    <p class="event-time" id="slide3-time"></p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+ </div>
+
+        <div id="container" style="width:70%;height: 100%">
+            <div id="map" style="width:100%;height:100%">
+            </div>
+            <div class="modal fade" id="eventModal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" >
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 id="eventName"></h4>
+                            <p class="modal-title" id="eventHost"></p>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-md-8">
+
+                                    <label>Description</label>
+                                    <br>
+                                    <div id="description"></div>
+                                    <label>Category</label>
+                                    <br>
+                                    <div id="categorie"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="nbP">Number of participants</label>
+                                            <div id="nbP"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="where">Where</label>
+                                            <div id="eventLocation"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="when">When</label>
+                                            <div id="times"></div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div id="attendees" hidden>
+                              <hr/>
+                              <h5>List of participants</h5>
+                              <p id="attendeesList"></p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="goingButton"></button>
+                            <!--<button type="button" class="btn btn-success">Interested</button>-->
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="createEventModal" role="dialog">
+              <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4>Create event</h4>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          <div class="form-group">
+                            <label for="createEventName">Event name</label>
+                            <input type="text" class="form-control" id="createEventName"></input>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label for="createEventStart">Start</label>
+                              <input type="datetime" class="form-control" id="createEventStart"></input>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="createEventEnd">End</label>
+                              <input type="datetime" class="form-control" id="createEventEnd"></input>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-8">
+                              <label for="createEventLocation">Location</label>
+                              <input type="text" class="form-control" id="createEventLocation"></input>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="createEventCategory">Category</label>
+                              <select class="form-control" id="createEventCategory">
+                                <option>Environmental</option>
+                                <option>Social work</option>
+                                <option>Social discourse</option>
+                                <option>Neighbourhood friendship</option>
+                                <option>Farming</option>
+                                <option>Collaborative Art</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="createEventDescription">Description</label>
+                            <textarea class="form-control" rows="3" id="createEventDescription"></textarea>
+                          </div>
+                          <p id="createEventMessage"></p>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="createEventButton" onclick="createEventControl()">Create</button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="modal fade" id="loginModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4>Login</h4>
+                        </div>
+                        <form>
+                          <div class="modal-body" id="loginModalBody">
+                              <div class="form-group">
+                                  <label for="loginEmail">Email</label>
+                                  <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email address" />
+                              </div>
+                              <div class="form-group">
+                                  <label for="loginPassword">Password</label>
+                                  <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" />
+                              </div>
+                              <p id="loginMessage"></p>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" onclick="loginControl();">Login</button>
+                          </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="registerModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4>Register</h4>
+                        </div>
+                        <form>
+                          <div class="modal-body" id="registerModalBody">
+                            <div class="form-group">
+                                <label for="registerEmail">Email</label>
+                                <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email address" />
+                            </div>
+                            <div class="form-group">
+                                <label for="registerPassword">Password</label>
+                                <input type="password" class="form-control" id="registerPassword" placeholder="Enter your password" />
+                            </div>
+                            <p id="registerMessage"></p>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" onclick="registerControl();">Register</button>
+                          </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script type="text/javascript">
+      document.getElementById("range").value = 20;
+      document.getElementById("start").value = new Date("2015-01-01");
+      document.getElementById("end").value = new Date("2015-12-31");
+
+      function addMarker(location, map, eventID) {
+        console.log("addMarker");
+        // Add the marker at the clicked location, and add the next-available label
+        // from the array of alphabetical characters.
+        var rand = Math.floor(Math.random() * 3);
+        var str = 'img/pin'.concat(rand).concat('.png');
+        var markerIcon = str;
+        var marker = new google.maps.Marker({
+          position: { lat: location.lat, lng: location.lng },
+          //label: labels[labelIndex++ % labels.length],
+          map: map,
+          icon: markerIcon
+        });
+
+        marker.addListener('click', function() {
+            openModal(events[eventID]);
+        });
+        markers.push(marker);
+      }
+
+      function openModal(eventData) {
+          $('#eventModal').modal('show');
+          console.log(eventData);
+          getUserName(eventData.eventData.host, function (name) {
+            $('#eventHost').html(name);
+          });
+          $("#description").html(eventData.description);
+          $("#nbP").html(eventData.eventData.participantcount || 0);
+          $("#eventLocation").html(eventData.eventLocation.locationString);
+          $("#times").html(eventData.times.start + '\n' + eventData.times.end);
+          $("#eventName").html(eventData.eventData.name);
+          $('#categorie').html(eventData.eventData.category);
+          isSubscribedTo(eventData.eventID, function (subscribed) {
+            if (subscribed) {
+              $('#goingButton').html("Going");
+              $('#goingButton').prop("disabled", true);
+              $('#goingButton').unbind("click");
+            } else {
+              $('#goingButton').html("Go!");
+              $('#goingButton').prop("disabled", false);
+              $('#goingButton').bind("click", {id: eventData.eventID}, function (event) {
+                subscribe(event.data.id);
+                $('#goingButton').html("Going");
+                $('#nbP').html((eventData.eventData.participantcount || 0) + 1);
+                $('#goingButton').prop("disabled", true);
+                $('#goingButton').unbind("click");
+              });
+            }
+          });
+
+          // Attendees
+          if (eventData.eventData.host == userID) {
+            $('#attendees').prop("hidden", false);
+            getSubscribers(eventData.eventID, function (subscribers) {
+              console.log(subscribers);
+              $('#attendeesList').html("");
+              subscribers.forEach(function (uid) {
+                console.log(uid);
+                getUserName(uid, function (name) {
+                  getUserEmail(uid, function (email) {
+                    $('#attendeesList').append("<a href='mailto:" + email + "'>" + name + "</a>&nbsp;");
+                  });
+                });
+              });
+            });
+          }
+      }
+
+      function loginModal() {
+        $('#loginModal').modal('show');
+
+      }
+
+      function registerModal() {
+        $('#registerModal').modal('show');
+
+      }
+
+      function createEventModal() {
+        $('#createEventModal').modal('show');
+        $('#createEventStart').val(new Date().toString());
+        $('#createEventEnd').val(new Date().toString());
+      }
+
+      function loginControl() {
+        login($('#loginEmail').val(), $('#loginPassword').val(), function (uid) {
+          $('#loginModal').modal('hide');
+          $('#identifier').html($('#loginEmail').val());
+          $('#not-connected').prop("hidden", true);
+          $('#connected').prop("hidden", false);
+        }, function () {
+          $('#loginModalBody').addClass("has-error");
+          $('#loginMessage').html("Invalid email or password");
+        })
+      }
+
+      function registerControl() {
+        createUser($('#registerEmail').val(), $('#registerPassword').val(), function (uid) {
+          $('#registerModal').modal('hide');
+          // Hide button
+        }, function () {
+          $('#registerModalBody').addClass("has-error");
+          $('#registerMessage').html("Invalid email or password");
+        })
+      }
+
+      function createEventControl() {
+        var locationString = $('#createEventLocation').val();
+        geocoder.geocode({ address: locationString }, function (results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            var location = {
+              locationString: locationString,
+              coords: {
+                lat: results[0].geometry.location.lat(),
+                lng: results[0].geometry.location.lng()
+              }
+            }
+            var name = $('#createEventName').val();
+            var start = $('#createEventStart').val();
+            var end = $('#createEventEnd').val();
+            var category = $('#createEventCategory').val();
+            var description = $('#createEventDescription').val();
+
+            createEvent(name, location, start, end, category, description);
+
+            $('#createEventModal').modal('hide');
+            query();
+          } else {
+            $('#createEventModalBody').addClass("has-error");
+            $('#createEventMessage').html("Unable to find location");
+
+          }
+        })
+      }
+
+      query();
+
+      function distance (lat1, lat2,lon1, lon2) {
+
+	    var R = 6371; // metres
+	    var phi1 = lat1* Math.PI / 180;
+	    var phi2 = lat2* Math.PI / 180;
+	    var deltaphi = (lat2-lat1)* Math.PI / 180;
+	    var deltalambda = (lon2-lon1)* Math.PI / 180;
+
+	    var a = Math.sin(deltaphi/2) * Math.sin(deltaphi/2) +
+	        Math.cos(phi1) * Math.cos(phi2) *
+	        Math.sin(deltalambda/2) * Math.sin(deltalambda/2);
+	    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+	    var d = R * c;
+
+    	return d;
+      }
+
+      function query() {
+
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
+
+        var start = new Date(document.getElementById("start").value);
+        var end = new Date(document.getElementById("end").value);
+        var range = document.getElementById("range").value;
+        var category = "Punching Ruben";
+        var best = [];
+        //var category = document.getElementById("category").value;
+        navigator.geolocation.getCurrentPosition(function(position){
+            getEvents(start, end, position.coords, range, category, function(eventID, eventData, times, eventLocation, description){
+                addMarker(eventLocation.coords,map,eventID);
+                events[eventID] = {
+                    eventID : eventID,
+                    eventData : eventData,
+                    times : times,
+                    eventLocation : eventLocation,
+                    description : description
+                }
+
+                best.push({eventID : eventID,eventLocation : eventLocation});
+
+
+                best.sort(function(a,b) {
+                    return distance(a.eventLocation.coords.lat, position.coords.latitude, a.eventLocation.coords.lng, position.coords.longitude) -
+                           distance(b.eventLocation.coords.lat, position.coords.latitude, b.eventLocation.coords.lng, position.coords.longitude)
+                });
+
+
+                $('#slide1-head').html(events[best[0].eventID].eventData.name);
+                $('#slide1-description').html(events[best[0].eventID].description);
+                $('#slide1-loca').html(events[best[0].eventID].eventLocation.locationString);
+                $('#slide1-time').html(events[best[0].eventID].times.start);
+                $('#slide1').on("click", function(){
+                   openModal(events[best[0].eventID]);
+                 });
+
+                $('#slide2-head').html(events[best[1].eventID].eventData.name);
+                $('#slide2-description').html(events[best[1].eventID].description);
+                $('#slide2-loca').html(events[best[1].eventID].eventLocation.locationString);
+                $('#slide2-time').html(events[best[1].eventID].times.start);
+                $('#slide2').on("click", function(){
+                  openModal(events[best[1].eventID]);
+                });
+
+                $('#slide3-head').html(events[best[2].eventID].eventData.name);
+                $('#slide3-description').html(events[best[2].eventID].description);
+                $('#slide3-loca').html(events[best[2].eventID].eventLocation.locationString);
+                $('#slide3-time').html(events[best[2].eventID].times.start);
+                $('#slide3').on("click", function() {
+                  openModal(events[best[2].eventID]);
+                });
+
+
+            });
+        });
+
+
+      }
+    </script>
+
+</body>
+
+</html>
