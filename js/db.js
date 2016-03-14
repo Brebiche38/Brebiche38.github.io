@@ -180,7 +180,7 @@ function subscribe(eventID) {
 	if (!userID) return false;
 
 	get(users.child("subscribers").child(eventID).child(userID), function (isSubscribed) {
-		if (isSubscribed) return;
+		if (isSubscribed === true) return;
 
 		users.child("events").child(userID).child(eventID).set(true);
 		events.child("subscribers").child(eventID).child(userID).set(true);
